@@ -33,6 +33,13 @@ Example: edges = [[1,2],[1,3],[2,3]]  ->  [2,3]
 Hint: Iterate edges. Use union-find: if find(u)==find(v), this edge closes
 a cycle and is the answer. Otherwise union(u, v).
 
+[MEDIUM] LeetCode 1319 - Number of Operations to Make Network Connected
+n computers and connections (cables). One operation relocates a cable.
+Return the min operations to connect all computers, or -1 if impossible.
+Example: n=4, connections=[[0,1],[0,2],[1,2]]  ->  1
+Hint: If cables < n-1, impossible (-1). Otherwise the answer is the number
+of connected components minus 1; union all edges and count the roots.
+
 [HARD] LeetCode 685 - Redundant Connection II (directed version)
 Same as above but the graph is directed. Return the edge that, if removed,
 results in a rooted tree.
@@ -133,7 +140,25 @@ func findRedundantConnection(edges [][]int) []int {
 	return nil
 }
 
-// 5) [HARD] LC 685: Redundant Connection II -- ~O(N * α(N))
+// 5) [MEDIUM] LC 1319: Number of Operations to Make Network Connected -- ~O(E * α(V))
+func makeConnected(n int, connections [][]int) int {
+	if len(connections) < n-1 {
+		return -1
+	}
+	d := NewDSU(n)
+	for _, c := range connections {
+		d.Union(c[0], c[1])
+	}
+	components := 0
+	for i := 0; i < n; i++ {
+		if d.Find(i) == i {
+			components++
+		}
+	}
+	return components - 1
+}
+
+// 6) [HARD] LC 685: Redundant Connection II -- ~O(N * α(N))
 func findRedundantDirectedConnection(edges [][]int) []int {
 	n := len(edges)
 	parent := make([]int, n+1)

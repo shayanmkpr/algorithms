@@ -32,6 +32,14 @@ Example: head = [4,2,1,3]  ->  [1,2,3,4]
 Hint: Find the middle with slow/fast pointers, recursively sort each half,
 then merge two sorted lists with a dummy node.
 
+[MEDIUM] LeetCode 56 - Merge Intervals
+Given intervals[i] = [start, end], merge all overlapping intervals and
+return the non-overlapping set covering all input ranges.
+Example: intervals = [[1,3],[2,6],[8,10],[15,18]]  ->  [[1,6],[8,10],[15,18]]
+Hint: Sort by start (here via merge sort). Iterate; if the current start
+<= last end, merge by extending the end to max(end, current.end);
+otherwise start a new group.
+
 [HARD] LeetCode 23 - Merge k Sorted Lists
 Given an array of k sorted linked lists, merge them into one sorted list.
 Example: lists = [[1,4,5],[1,3,4],[2,6]]  ->  [1,1,2,3,4,4,5,6]
@@ -158,7 +166,55 @@ func mergeTwo(a, b *ListNode) *ListNode {
 	return dummy.Next
 }
 
-// 5) [HARD] LC 23: Merge k Sorted Lists -- O(N log k) via divide & conquer
+// 5) [MEDIUM] LC 56: Merge Intervals -- O(n log n)
+func mergeIntervals(intervals [][]int) [][]int {
+	if len(intervals) == 0 {
+		return nil
+	}
+	mergeSortIntervals(intervals, 0, len(intervals)-1)
+	res := [][]int{intervals[0]}
+	for i := 1; i < len(intervals); i++ {
+		last := res[len(res)-1]
+		if intervals[i][0] <= last[1] {
+			if intervals[i][1] > last[1] {
+				last[1] = intervals[i][1]
+			}
+		} else {
+			res = append(res, intervals[i])
+		}
+	}
+	return res
+}
+
+func mergeSortIntervals(a [][]int, lo, hi int) {
+	if lo >= hi {
+		return
+	}
+	mid := (lo + hi) / 2
+	mergeSortIntervals(a, lo, mid)
+	mergeSortIntervals(a, mid+1, hi)
+	tmp := make([][]int, hi-lo+1)
+	i, j, k := lo, mid+1, 0
+	for i <= mid && j <= hi {
+		if a[i][0] <= a[j][0] {
+			tmp[k] = a[i]
+			i++
+		} else {
+			tmp[k] = a[j]
+			j++
+		}
+		k++
+	}
+	for ; i <= mid; i, k = i+1, k+1 {
+		tmp[k] = a[i]
+	}
+	for ; j <= hi; j, k = j+1, k+1 {
+		tmp[k] = a[j]
+	}
+	copy(a[lo:hi+1], tmp)
+}
+
+// 6) [HARD] LC 23: Merge k Sorted Lists -- O(N log k) via divide & conquer
 func mergeKLists(lists []*ListNode) *ListNode {
 	if len(lists) == 0 {
 		return nil

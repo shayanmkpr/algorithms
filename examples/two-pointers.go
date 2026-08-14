@@ -37,6 +37,14 @@ Example: nums = [-1,0,1,2,-1,-4]  ->  [[-1,-1,2],[-1,0,1]]
 Hint: Sort first. Fix index i, then use two pointers (l, r) on the rest.
 Skip duplicates on i, l, and r to avoid repeated triplets.
 
+[MEDIUM] LeetCode 11 - Container With Most Water
+Vertical lines of given heights; pick two to form a container with the
+x-axis and maximize the water (area = width * min height).
+Example: height = [1,8,6,2,5,4,8,3,7]  ->  49
+Hint: Two pointers at both ends. Area = (r-l) * min(h[l], h[r]). Move the
+shorter side inward each step -- the taller side can never yield a larger
+area with a narrower width.
+
 [HARD] LeetCode 42 - Trapping Rain Water
 Given an elevation map, compute how much water it can trap after rain.
 Example: height = [0,1,0,2,1,0,1,3,2,1,2,1]  ->  6
@@ -136,7 +144,28 @@ func threeSum(nums []int) [][]int {
 	return res
 }
 
-// 5) [HARD] LC 42: Trapping Rain Water -- O(n) time, O(1) space
+// 5) [MEDIUM] LC 11: Container With Most Water -- O(n)
+func maxArea(height []int) int {
+	l, r, best := 0, len(height)-1, 0
+	for l < r {
+		h := height[l]
+		if height[r] < h {
+			h = height[r]
+		}
+		area := (r - l) * h
+		if area > best {
+			best = area
+		}
+		if height[l] < height[r] {
+			l++
+		} else {
+			r--
+		}
+	}
+	return best
+}
+
+// 6) [HARD] LC 42: Trapping Rain Water -- O(n) time, O(1) space
 func trap(height []int) int {
 	l, r := 0, len(height)-1
 	lMax, rMax, water := 0, 0, 0

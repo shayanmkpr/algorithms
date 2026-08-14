@@ -32,6 +32,14 @@ Example: nums = [1,2,3]  ->  6 permutations
 Hint: Maintain a `used` boolean array. At each level pick any unused
 number, mark it used, recurse, then unmark before trying the next pick.
 
+[MEDIUM] LeetCode 39 - Combination Sum
+Given distinct candidates and a target, return all unique combinations
+that sum to target (each candidate may be used unlimited times).
+Example: candidates = [2,3,6,7], target = 7  ->  [[2,2,3],[7]]
+Hint: Backtrack from index i, reusing the same candidate. Add candidates[i]
+to the path, recurse from i (not i+1) since reuse is allowed, then pop.
+Skipping forward to i+1 enumerates the other choices.
+
 [HARD] LeetCode 51 - N-Queens
 Place n queens on an n x n board so that no two attack each other. Return
 all distinct configurations.
@@ -141,7 +149,32 @@ func permute(nums []int) [][]int {
 	return res
 }
 
-// 5) [HARD] LC 51: N-Queens -- O(n!)
+// 5) [MEDIUM] LC 39: Combination Sum -- O(2^(t/m) * n)
+func combinationSum(candidates []int, target int) [][]int {
+	res := [][]int{}
+	cur := []int{}
+	var bt func(start, remaining int)
+	bt = func(start, remaining int) {
+		if remaining == 0 {
+			cp := make([]int, len(cur))
+			copy(cp, cur)
+			res = append(res, cp)
+			return
+		}
+		for i := start; i < len(candidates); i++ {
+			if candidates[i] > remaining {
+				continue
+			}
+			cur = append(cur, candidates[i])
+			bt(i, remaining-candidates[i])
+			cur = cur[:len(cur)-1]
+		}
+	}
+	bt(0, target)
+	return res
+}
+
+// 6) [HARD] LC 51: N-Queens -- O(n!)
 func solveNQueens(n int) [][]string {
 	res := [][]string{}
 	cols := make([]bool, n)

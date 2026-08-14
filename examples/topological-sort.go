@@ -36,6 +36,14 @@ Example: 4, [[1,0],[2,0],[3,1],[3,2]]  ->  [0,2,1,3] (one valid answer)
 Hint: Same Kahn's algorithm; record nodes in the order they leave the
 queue. If the order's length < numCourses, there is a cycle.
 
+[MEDIUM] LeetCode 310 - Minimum Height Trees
+Given n nodes and undirected edges, return the labels of all roots that
+produce a tree of minimum height.
+Example: n=4, edges=[[1,0],[1,2],[1,3]]  ->  [1]
+Hint: Repeatedly peel the leaves (degree-1 nodes) layer by layer until 1 or
+2 nodes remain -- those are the MHT roots. Compute initial degrees, enqueue
+leaves, and shrink inward (Kahn's algorithm run "in reverse").
+
 [HARD] LeetCode 269 - Alien Dictionary
 A list of words is sorted by an unknown alphabet. Return any valid order
 of letters used, or "" if impossible.
@@ -153,7 +161,43 @@ func findOrder(numCourses int, prerequisites [][]int) []int {
 	return order
 }
 
-// 5) [HARD] LC 269: Alien Dictionary -- O(C) where C is total chars
+// 5) [MEDIUM] LC 310: Minimum Height Trees -- O(V + E)
+func findMinHeightTrees(n int, edges [][]int) []int {
+	if n == 1 {
+		return []int{0}
+	}
+	adj := make([][]int, n)
+	degree := make([]int, n)
+	for _, e := range edges {
+		adj[e[0]] = append(adj[e[0]], e[1])
+		adj[e[1]] = append(adj[e[1]], e[0])
+		degree[e[0]]++
+		degree[e[1]]++
+	}
+	leaves := []int{}
+	for i := 0; i < n; i++ {
+		if degree[i] == 1 {
+			leaves = append(leaves, i)
+		}
+	}
+	remaining := n
+	for remaining > 2 {
+		remaining -= len(leaves)
+		nextLeaves := []int{}
+		for _, leaf := range leaves {
+			for _, nb := range adj[leaf] {
+				degree[nb]--
+				if degree[nb] == 1 {
+					nextLeaves = append(nextLeaves, nb)
+				}
+			}
+		}
+		leaves = nextLeaves
+	}
+	return leaves
+}
+
+// 6) [HARD] LC 269: Alien Dictionary -- O(C) where C is total chars
 func alienOrder(words []string) string {
 	indeg := make(map[byte]int)
 	adj := make(map[byte]map[byte]bool)

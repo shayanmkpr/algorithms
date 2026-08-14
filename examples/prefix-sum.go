@@ -33,6 +33,15 @@ Example: nums = [1,1,1], k = 2  ->  2
 Hint: Track running prefix `sum`. For each index, count how many earlier
 prefix values equal sum-k using a hash map (init {0:1}).
 
+[MEDIUM] LeetCode 1314 - Matrix Block Sum
+For each cell, return the sum of mat[i'][j'] where r-K <= i' <= r+K and
+c-K <= j' <= c+K (coordinates clamped to the matrix bounds).
+Example: mat = [[1,2,3],[4,5,6],[7,8,9]], k = 1  ->
+  [[12,21,16],[27,45,33],[24,39,28]]
+Hint: Build a 2D prefix sum of size (m+1)x(n+1). Each answer is a
+constant-time inclusion-exclusion query with the rectangle corners clamped
+to [0, m-1] and [0, n-1].
+
 [HARD] LeetCode 363 - Max Sum of Rectangle No Larger Than K
 Given an m x n matrix, find the max sum of a rectangle whose sum <= k.
 Example: matrix=[[1,0,1],[0,-2,3]], k=2  ->  2
@@ -96,7 +105,45 @@ func subarraySum(nums []int, k int) int {
 	return count
 }
 
-// 5) [HARD] LC 363: Max Sum of Rectangle No Larger Than K -- O(min(m,n)^2 * max(m,n) * log(max(m,n)))
+// 5) [MEDIUM] LC 1314: Matrix Block Sum -- O(m*n) build + O(1) per cell
+func matrixBlockSum(mat [][]int, k int) [][]int {
+	m, n := len(mat), len(mat[0])
+	pre := make([][]int, m+1)
+	for i := range pre {
+		pre[i] = make([]int, n+1)
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			pre[i+1][j+1] = mat[i][j] + pre[i][j+1] + pre[i+1][j] - pre[i][j]
+		}
+	}
+	res := make([][]int, m)
+	for i := 0; i < m; i++ {
+		res[i] = make([]int, n)
+		for j := 0; j < n; j++ {
+			r1 := i - k
+			if r1 < 0 {
+				r1 = 0
+			}
+			c1 := j - k
+			if c1 < 0 {
+				c1 = 0
+			}
+			r2 := i + k + 1
+			if r2 > m {
+				r2 = m
+			}
+			c2 := j + k + 1
+			if c2 > n {
+				c2 = n
+			}
+			res[i][j] = pre[r2][c2] - pre[r1][c2] - pre[r2][c1] + pre[r1][c1]
+		}
+	}
+	return res
+}
+
+// 6) [HARD] LC 363: Max Sum of Rectangle No Larger Than K -- O(min(m,n)^2 * max(m,n) * log(max(m,n)))
 func maxSumSubmatrix(matrix [][]int, k int) int {
 	m, n := len(matrix), len(matrix[0])
 	const negInf = -1 << 31

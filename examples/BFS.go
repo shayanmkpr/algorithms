@@ -33,6 +33,13 @@ Example: grid = [["1","1","0"],["1","0","0"],["0","0","1"]]  ->  2
 Hint: Scan the grid. When you find a '1', BFS from there and mark all
 connected land as visited (or '0'). Increment the island counter once.
 
+[MEDIUM] LeetCode 994 - Rotting Oranges
+Each minute, fresh oranges (1) adjacent to a rotten one (2) become rotten.
+Return the min minutes until no fresh orange remains, or -1 if impossible.
+Example: grid = [[2,1,1],[1,1,0],[0,1,1]]  ->  4
+Hint: Multi-source BFS. Enqueue all rotten oranges at minute 0, then flood
+fill level by level. Track the fresh count; if any remains at the end, -1.
+
 [HARD] LeetCode 127 - Word Ladder
 Given beginWord, endWord, and wordList, return the length of the shortest
 transformation sequence (each step changes one letter and must be in the
@@ -159,7 +166,48 @@ func numIslands(grid [][]byte) int {
 	return count
 }
 
-// 5) [HARD] LC 127: Word Ladder -- O(N * L^2)
+// 5) [MEDIUM] LC 994: Rotting Oranges -- O(m*n)
+func orangesRotting(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	q := [][2]int{}
+	fresh := 0
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 2 {
+				q = append(q, [2]int{i, j})
+			} else if grid[i][j] == 1 {
+				fresh++
+			}
+		}
+	}
+	if fresh == 0 {
+		return 0
+	}
+	dirs := [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+	minutes := 0
+	for len(q) > 0 && fresh > 0 {
+		size := len(q)
+		for i := 0; i < size; i++ {
+			cell := q[0]
+			q = q[1:]
+			for _, d := range dirs {
+				x, y := cell[0]+d[0], cell[1]+d[1]
+				if x >= 0 && x < m && y >= 0 && y < n && grid[x][y] == 1 {
+					grid[x][y] = 2
+					fresh--
+					q = append(q, [2]int{x, y})
+				}
+			}
+		}
+		minutes++
+	}
+	if fresh > 0 {
+		return -1
+	}
+	return minutes - 1
+}
+
+// 6) [HARD] LC 127: Word Ladder -- O(N * L^2)
 func ladderLength(beginWord, endWord string, wordList []string) int {
 	dict := make(map[string]bool, len(wordList))
 	for _, w := range wordList {

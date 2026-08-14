@@ -40,6 +40,14 @@ Hint: Bellman-Ford-like relaxation: for each edge (u,v,p), if prob[u]*p
 > prob[v], update. Repeat until no updates (or n-1 times). Multiplication
 of probabilities replaces sum of weights.
 
+[MEDIUM] LeetCode 1466 - Reorder Routes to Make All Paths Lead to the City Zero
+n cities form a tree of directed roads. Reversing a road costs 1. Return
+the min reversals so every city can reach city 0.
+Example: n=5, connections=[[1,0],[1,2],[3,2],[3,4]]  ->  2
+Hint: BFS from 0 over the undirected tree. For a directed edge a->b,
+traversing a->b (parent a to child b) means the road points away from 0
+and must be flipped (cost 1); the reverse traversal costs 0.
+
 [HARD] LeetCode 1928 - Minimum Cost to Reach Destination in Time
 Given an undirected weighted graph and passingFees[i] for each city, find
 the min total fees from city 0 to city n-1 within maxTime, or -1.
@@ -178,7 +186,34 @@ func maxProbability(n int, edges [][]int, succProb []float64, start, end int) fl
 	return prob[end]
 }
 
-// 5) [HARD] LC 1928: Minimum Cost to Reach Destination in Time -- O(maxTime * E)
+// 5) [MEDIUM] LC 1466: Reorder Routes to Make All Paths Lead to City Zero -- O(n)
+func minReorder(n int, connections [][]int) int {
+	adj := make([][][2]int, n)
+	for _, c := range connections {
+		u, v := c[0], c[1]
+		adj[u] = append(adj[u], [2]int{v, 1})  // real direction, costs 1 to flip
+		adj[v] = append(adj[v], [2]int{u, 0})  // reverse direction, costs 0
+	}
+	visited := make([]bool, n)
+	visited[0] = true
+	q := []int{0}
+	cost := 0
+	for len(q) > 0 {
+		u := q[0]
+		q = q[1:]
+		for _, e := range adj[u] {
+			v, w := e[0], e[1]
+			if !visited[v] {
+				visited[v] = true
+				cost += w
+				q = append(q, v)
+			}
+		}
+	}
+	return cost
+}
+
+// 6) [HARD] LC 1928: Minimum Cost to Reach Destination in Time -- O(maxTime * E)
 func minCost(maxTime int, edges [][]int, passingFees []int) int {
 	n := len(passingFees)
 	const inf = 1 << 30

@@ -40,6 +40,15 @@ queries=[["a","c"],["b","a"],["a","e"],["a","a"],["x","x"]]
 Hint: Map variables to indices. Build a value matrix using FW: through
 intermediate k, val[i][j] = val[i][k] * val[k][j].
 
+[MEDIUM] LeetCode 2192 - All Ancestors of a Node in a Directed Acyclic Graph
+For each node i, return the sorted list of all ancestors (nodes with a
+directed path into i) -- the transitive closure of the DAG.
+Example: n=8, edges=[[0,3],[0,4],[1,3],[2,4],[2,7],[3,5],[3,6],[3,7],
+[4,6]]  ->  [[],[],[],[0,1],[0,2],[0,1,3],[0,1,2,3,4],[0,1,2,3]]
+Hint: Build the reverse graph (parents[v] = nodes u with edge u->v). For
+each node, BFS/DFS over the reverse graph collecting all reachable nodes;
+that set is its ancestors. Emit each list in sorted order.
+
 [HARD] LeetCode 1462 - Course Schedule IV
 Given prerequisites and queries [u,v], return for each query whether u is
 a prerequisite (direct or indirect) of v.
@@ -212,7 +221,43 @@ func calcEquation(equations [][]string, values []float64, queries [][]string) []
 	return out
 }
 
-// 5) [HARD] LC 1462: Course Schedule IV -- O(N^3 + Q)
+// 5) [MEDIUM] LC 2192: All Ancestors of a Node in a DAG -- O(V * (V + E) + sort)
+func getAncestors(n int, edges [][]int) [][]int {
+	parents := make([][]int, n)
+	for _, e := range edges {
+		parents[e[1]] = append(parents[e[1]], e[0])
+	}
+	res := make([][]int, n)
+	for i := 0; i < n; i++ {
+		visited := make([]bool, n)
+		q := []int{i}
+		visited[i] = true
+		anc := []int{}
+		for len(q) > 0 {
+			u := q[0]
+			q = q[1:]
+			for _, p := range parents[u] {
+				if !visited[p] {
+					visited[p] = true
+					anc = append(anc, p)
+					q = append(q, p)
+				}
+			}
+		}
+		// sort ancestors ascending
+		for a := 0; a < len(anc); a++ {
+			for b := a + 1; b < len(anc); b++ {
+				if anc[b] < anc[a] {
+					anc[a], anc[b] = anc[b], anc[a]
+				}
+			}
+		}
+		res[i] = anc
+	}
+	return res
+}
+
+// 6) [HARD] LC 1462: Course Schedule IV -- O(N^3 + Q)
 func checkIfPrerequisite(numCourses int, prerequisites [][]int, queries [][]int) []bool {
 	r := make([][]bool, numCourses)
 	for i := range r {

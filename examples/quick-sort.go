@@ -35,6 +35,12 @@ Example: nums = [3,2,1,5,6,4], k = 2  ->  5
 Hint: Convert to "find element with index n-k after partition". Recurse
 into only one side after each partition.
 
+[MEDIUM] LeetCode 973 - K Closest Points to Origin
+Return the k points closest to the origin (0,0) (any order on ties).
+Example: points = [[1,3],[-2,2]], k = 1  ->  [[-2,2]]
+Hint: Quickselect on squared distance. Partition so the k smallest are in
+the first k slots (average O(n)). Avoid sqrt -- compare squared distances.
+
 [HARD] LeetCode 324 - Wiggle Sort II
 Reorder nums so nums[0] < nums[1] > nums[2] < nums[3] ... in O(n) average
 time, ideally O(1) extra space.
@@ -128,7 +134,39 @@ func findKthLargest(nums []int, k int) int {
 	return -1
 }
 
-// 5) [HARD] LC 324: Wiggle Sort II -- O(n) avg via quickselect + virtual index
+// 5) [MEDIUM] LC 973: K Closest Points to Origin -- average O(n) via quickselect
+func kClosest(points [][]int, k int) [][]int {
+	dist := func(p []int) int { return p[0]*p[0] + p[1]*p[1] }
+	lo, hi := 0, len(points)-1
+	for lo < hi {
+		p := partitionPoints(points, lo, hi, dist)
+		if p == k {
+			break
+		} else if p < k {
+			lo = p + 1
+		} else {
+			hi = p - 1
+		}
+	}
+	return points[:k]
+}
+
+func partitionPoints(points [][]int, lo, hi int, dist func([]int) int) int {
+	r := lo + rand.Intn(hi-lo+1)
+	points[r], points[hi] = points[hi], points[r]
+	pivot := dist(points[hi])
+	i := lo
+	for j := lo; j < hi; j++ {
+		if dist(points[j]) < pivot {
+			points[i], points[j] = points[j], points[i]
+			i++
+		}
+	}
+	points[i], points[hi] = points[hi], points[i]
+	return i
+}
+
+// 6) [HARD] LC 324: Wiggle Sort II -- O(n) avg via quickselect + virtual index
 func wiggleSort(nums []int) {
 	n := len(nums)
 	mid := quickSelect(append([]int(nil), nums...), 0, n-1, n/2)

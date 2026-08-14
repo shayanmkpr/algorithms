@@ -1,7 +1,7 @@
-0. **Binary Search**  
+0. **Binary Search**  --> low, high, find the middle.
 Binary search is used when data is sorted, or when the answer space has a monotonic condition like “too small, too small, valid, valid.” Implementation usually keeps `left` and `right` boundaries, checks `mid`, then moves one boundary to discard half the search space. It is used for sorted arrays, lower/upper bounds, search suggestions, and “minimum value that satisfies X” problems. Time complexity is `O(log n)`.
 
-1. **Merge Sort**  
+1. **Merge Sort**
 Merge sort is a real production-relevant sorting algorithm, especially when stable sorting or predictable performance matters. It works by recursively splitting the array into halves until the pieces are size 1, then merging sorted halves back together using two pointers. It always runs in `O(n log n)`, but usually needs `O(n)` extra memory. It is also useful for linked lists and external sorting where data may not fit in memory.
 
 2. **Quick Sort**  
@@ -10,7 +10,7 @@ Quick sort is a fast in-memory sorting algorithm. It chooses a pivot, partitions
 3. **Two Pointers**  
 Two pointers is a technique where two indexes move through an array/string to avoid nested loops. A common implementation starts one pointer at the beginning and one at the end, then moves one side based on the current condition. It is heavily used with sorted arrays, pair-sum problems, removing duplicates, reversing arrays, palindrome checks, and partitioning. Most solutions are `O(n)`.
 
-4. **Sliding Window**  
+4. **Sliding Window**  --> push in and pop out. very important
 Sliding window is used when the problem asks about a contiguous subarray or substring. Implementation usually has `left` and `right` pointers: expand `right` to include new elements, and move `left` forward when the window becomes invalid or too large. You maintain state such as count, sum, frequency map, or max value as the window moves. It is used for longest substring, shortest subarray, rate limiting, and streaming-window problems. Usually `O(n)`.
 
 5. **Prefix Sum**  

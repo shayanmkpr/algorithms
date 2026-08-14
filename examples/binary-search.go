@@ -33,6 +33,13 @@ Example: nums = [4,5,6,7,0,1,2], target = 0  ->  4
 Hint: At each step one half is always sorted. Decide which half holds the
 target by comparing nums[lo], nums[mid], nums[hi].
 
+[MEDIUM] LeetCode 153 - Find Minimum in Rotated Sorted Array
+A sorted array was rotated. Find the minimum element in O(log n).
+Example: nums = [3,4,5,1,2]  ->  1
+Hint: Compare nums[mid] with nums[hi]. If nums[mid] < nums[hi], the min is
+in the left half (including mid); set hi = mid. Else it's in the right
+half; set lo = mid + 1. Loop until lo == hi.
+
 [HARD] LeetCode 4 - Median of Two Sorted Arrays
 Given two sorted arrays nums1 and nums2, return the median of the merged
 sorted array in O(log(min(m, n))).
@@ -115,7 +122,21 @@ func searchRotated(nums []int, target int) int {
 	return -1
 }
 
-// 5) [HARD] LC 4: Median of Two Sorted Arrays -- O(log(min(m, n)))
+// 5) [MEDIUM] LC 153: Find Minimum in Rotated Sorted Array -- O(log n)
+func findMin(nums []int) int {
+	lo, hi := 0, len(nums)-1
+	for lo < hi {
+		mid := lo + (hi-lo)/2
+		if nums[mid] < nums[hi] {
+			hi = mid
+		} else {
+			lo = mid + 1
+		}
+	}
+	return nums[lo]
+}
+
+// 6) [HARD] LC 4: Median of Two Sorted Arrays -- O(log(min(m, n)))
 func findMedianSortedArrays(nums1, nums2 []int) float64 {
 	if len(nums1) > len(nums2) {
 		nums1, nums2 = nums2, nums1

@@ -41,6 +41,14 @@ Example: n=3, connections=[[1,2,5],[1,3,6],[2,3,1]]  ->  6
 Hint: Classic Kruskal: sort edges, union endpoints if not yet connected.
 After processing, if you've accepted n-1 edges -> total; else -1.
 
+[MEDIUM] LeetCode 1631 - Path With Minimum Effort (via Kruskal + Union-Find)
+In an m x n grid of heights, find a path from top-left to bottom-right
+minimizing the maximum absolute difference between adjacent cells.
+Example: heights = [[1,2,2],[3,8,2],[5,3,5]]  ->  2
+Hint: Treat each adjacent cell pair as an edge weighted by |h(a)-h(b)|.
+Sort edges (Kruskal-style) and union cells in increasing weight; the
+moment (0,0) and (m-1,n-1) connect, the last edge weight is the answer.
+
 [HARD] LeetCode 1489 - Find Critical and Pseudo-Critical Edges in MST
 Return [critical, pseudo] edge indices.
 - Critical: removing it strictly increases MST weight.
@@ -202,7 +210,41 @@ func minimumCost(n int, connections [][]int) int {
 	return cost
 }
 
-// 5) [HARD] LC 1489: Find Critical and Pseudo-Critical Edges in MST -- O(E^2 * α(V))
+// 5) [MEDIUM] LC 1631: Path With Minimum Effort (Kruskal + UF) -- O(m*n*log(m*n))
+func minimumEffortPathKruskal(heights [][]int) int {
+	m, n := len(heights), len(heights[0])
+	type edge struct{ u, v, w int }
+	edges := []edge{}
+	abs := func(x int) int {
+		if x < 0 {
+			return -x
+		}
+		return x
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if j+1 < n {
+				edges = append(edges, edge{i*n + j, i*n + j + 1, abs(heights[i][j] - heights[i][j+1])})
+			}
+			if i+1 < m {
+				edges = append(edges, edge{i*n + j, (i+1)*n + j, abs(heights[i][j] - heights[i+1][j])})
+			}
+		}
+	}
+	sort.Slice(edges, func(a, b int) bool { return edges[a].w < edges[b].w })
+	d := newDSU(m * n)
+	src, dst := 0, m*n-1
+	for _, e := range edges {
+		if d.union(e.u, e.v) {
+			if d.find(src) == d.find(dst) {
+				return e.w
+			}
+		}
+	}
+	return 0
+}
+
+// 6) [HARD] LC 1489: Find Critical and Pseudo-Critical Edges in MST -- O(E^2 * α(V))
 func findCriticalAndPseudoCriticalEdges(n int, edges [][]int) [][]int {
 	type idxEdge struct {
 		u, v, w, idx int

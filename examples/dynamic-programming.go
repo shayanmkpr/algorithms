@@ -34,6 +34,13 @@ Example: coins=[1,2,5], amount=11  ->  3 (5+5+1)
 Hint: dp[a] = min over coins c <= a of dp[a-c] + 1. Initialize dp[0]=0
 and dp[a]=amount+1 (a sentinel "infinity").
 
+[MEDIUM] LeetCode 300 - Longest Increasing Subsequence
+Return the length of the longest strictly increasing subsequence.
+Example: nums = [10,9,2,5,3,7,101,18]  ->  4 ([2,3,7,101])
+Hint: Patience sorting: keep `tails` where tails[i] is the smallest tail
+of any increasing subsequence of length i+1. Binary-search each num; if it
+extends, append; else replace the first tails[k] >= num.
+
 [HARD] LeetCode 72 - Edit Distance
 Given two strings word1, word2, return the minimum operations (insert,
 delete, replace) to transform word1 into word2.
@@ -105,7 +112,29 @@ func coinChange(coins []int, amount int) int {
 	return dp[amount]
 }
 
-// 5) [HARD] LC 72: Edit Distance -- O(m*n) time, O(n) space
+// 5) [MEDIUM] LC 300: Longest Increasing Subsequence -- O(n log n)
+func lengthOfLIS(nums []int) int {
+	tails := []int{}
+	for _, v := range nums {
+		lo, hi := 0, len(tails)
+		for lo < hi {
+			mid := (lo + hi) / 2
+			if tails[mid] < v {
+				lo = mid + 1
+			} else {
+				hi = mid
+			}
+		}
+		if lo == len(tails) {
+			tails = append(tails, v)
+		} else {
+			tails[lo] = v
+		}
+	}
+	return len(tails)
+}
+
+// 6) [HARD] LC 72: Edit Distance -- O(m*n) time, O(n) space
 func minDistance(word1, word2 string) int {
 	m, n := len(word1), len(word2)
 	prev := make([]int, n+1)

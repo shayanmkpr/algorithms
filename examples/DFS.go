@@ -32,6 +32,14 @@ Example: returns the size of the largest connected component of 1's.
 Hint: DFS from each unvisited 1, sum 1 + area in 4 directions, then mark
 visited (set to 0) so each cell is counted once.
 
+[MEDIUM] LeetCode 133 - Clone Graph
+Given a reference node in a connected undirected graph with labeled nodes
+(Val 1..n), return a deep copy of the entire graph.
+Example: adjList = [[2,4],[1,3],[2,4],[1,3]]  ->  same structure
+Hint: DFS with a map from original node pointer to its clone. On entering a
+node, if already cloned return the clone; else create it and recursively
+clone each neighbor.
+
 [HARD] LeetCode 124 - Binary Tree Maximum Path Sum
 A path is any sequence of nodes connected by edges, not necessarily through
 the root. Return the maximum path sum.
@@ -116,7 +124,33 @@ func maxAreaOfIsland(grid [][]int) int {
 	return best
 }
 
-// 5) [HARD] LC 124: Binary Tree Maximum Path Sum -- O(n)
+// 5) [MEDIUM] LC 133: Clone Graph -- O(V + E)
+type graphNode struct {
+	Val       int
+	Neighbors []*graphNode
+}
+
+func cloneGraph(node *graphNode) *graphNode {
+	if node == nil {
+		return nil
+	}
+	cloned := map[int]*graphNode{}
+	var dfs func(n *graphNode) *graphNode
+	dfs = func(n *graphNode) *graphNode {
+		if c, ok := cloned[n.Val]; ok {
+			return c
+		}
+		cp := &graphNode{Val: n.Val}
+		cloned[n.Val] = cp
+		for _, nb := range n.Neighbors {
+			cp.Neighbors = append(cp.Neighbors, dfs(nb))
+		}
+		return cp
+	}
+	return dfs(node)
+}
+
+// 6) [HARD] LC 124: Binary Tree Maximum Path Sum -- O(n)
 func maxPathSum(root *TreeNode) int {
 	const negInf = -1 << 31
 	best := negInf

@@ -32,6 +32,13 @@ Example: s = "abcabcbb"  ->  3 ("abc")
 Hint: Expand right, store last index of each char in a map. If char repeats
 inside window, move left to lastIndex+1. Update max length each step.
 
+[MEDIUM] LeetCode 438 - Find All Anagrams in a String
+Return the start indices of all substrings of s that are anagrams of p.
+Example: s = "cbaebabacd", p = "abc"  ->  [0,6]
+Hint: Fixed-size window of length len(p). Maintain 26-count arrays for the
+window and for p; compare when the window is full. Slide by dropping the
+left char and adding the right char.
+
 [HARD] LeetCode 76 - Minimum Window Substring
 Given strings s and t, return the minimum window in s that contains all
 characters of t (with multiplicity). If none, return "".
@@ -103,7 +110,32 @@ func lengthOfLongestSubstring(s string) int {
 	return best
 }
 
-// 5) [HARD] LC 76: Minimum Window Substring -- O(|s| + |t|)
+// 5) [MEDIUM] LC 438: Find All Anagrams in a String -- O(|s| + |p|)
+func findAnagrams(s string, p string) []int {
+	if len(p) > len(s) {
+		return []int{}
+	}
+	pCount := [26]int{}
+	wCount := [26]int{}
+	for i := 0; i < len(p); i++ {
+		pCount[p[i]-'a']++
+		wCount[s[i]-'a']++
+	}
+	res := []int{}
+	if pCount == wCount {
+		res = append(res, 0)
+	}
+	for i := len(p); i < len(s); i++ {
+		wCount[s[i-len(p)]-'a']--
+		wCount[s[i]-'a']++
+		if pCount == wCount {
+			res = append(res, i-len(p)+1)
+		}
+	}
+	return res
+}
+
+// 6) [HARD] LC 76: Minimum Window Substring -- O(|s| + |t|)
 func minWindow(s, t string) string {
 	if len(t) > len(s) {
 		return ""

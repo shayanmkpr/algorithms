@@ -35,6 +35,14 @@ Example: nums = [2,3,1,1,4]  ->  true ; [3,2,1,0,4]  ->  false
 Hint: Track the farthest index reachable. If at index i > reachable, return
 false. Otherwise update reachable = max(reachable, i + nums[i]).
 
+[MEDIUM] LeetCode 45 - Jump Game II
+Each index has a non-negative jump length. Return the minimum number of
+jumps to reach the last index (guaranteed reachable).
+Example: nums = [2,3,1,1,4]  ->  2 (jump 0 -> 1 -> 4)
+Hint: Greedy level-by-level BFS. Track the current level's end `curEnd`
+and the farthest index seen. When i reaches curEnd, jump once and extend
+curEnd to farthest. Stop when curEnd passes the last index.
+
 [HARD] LeetCode 135 - Candy
 Children stand in a line with ratings[i]. Each gets at least 1 candy and a
 child with a higher rating than a neighbor must get more candies. Return
@@ -118,7 +126,25 @@ func canJump(nums []int) bool {
 	return true
 }
 
-// 5) [HARD] LC 135: Candy -- O(n) time, O(n) space
+// 5) [MEDIUM] LC 45: Jump Game II -- O(n)
+func jump(nums []int) int {
+	jumps, curEnd, farthest := 0, 0, 0
+	for i := 0; i < len(nums)-1; i++ {
+		if i+nums[i] > farthest {
+			farthest = i + nums[i]
+		}
+		if i == curEnd {
+			jumps++
+			curEnd = farthest
+			if curEnd >= len(nums)-1 {
+				break
+			}
+		}
+	}
+	return jumps
+}
+
+// 6) [HARD] LC 135: Candy -- O(n) time, O(n) space
 func candy(ratings []int) int {
 	n := len(ratings)
 	c := make([]int, n)

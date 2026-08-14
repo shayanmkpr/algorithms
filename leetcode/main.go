@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 type IntHeap []int
 
@@ -33,8 +31,106 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
+func MinCost(nums []int) int {
+
+	var max func(i, j int) int
+	max = func(i, j int) int {
+		if i > j {
+			return i
+		} else {
+			return j
+		}
+	}
+
+	var minCost int
+	var flag bool
+
+	var dfs func(arr []int, cost int)
+	dfs = func(arr []int, cost int) {
+		if len(arr) < 3 {
+			cost += max(arr[0], arr[1])
+			if !flag {
+				minCost = cost
+				flag = true
+			}
+			if cost < minCost {
+				minCost = cost
+			}
+			return
+		}
+
+		// 0
+		cost += max(arr[1], arr[2])
+		arr0 := append([]int{arr[0]}, arr[2:]...)
+		dfs(arr0, cost)
+
+		// 1
+		cost += max(arr[0], arr[2])
+		arr1 := append([]int{arr[1]}, arr[2:]...)
+		dfs(arr1, cost)
+
+		// 2
+		cost += max(arr[0], arr[1])
+		arr2 := append([]int{arr[0], arr[1]}, arr[2:]...)
+		dfs(arr2, cost)
+	}
+	dfs(nums, 0)
+	return minCost
+}
+
 func main() {
-	fmt.Println(twoEditWords([]string{"word", "note", "ants", "wood"}, []string{"wood", "joke", "moat"}))
+	// fmt.Println(canPartition([]int{1, 2, 3, 5}))
+	fmt.Println(canPartition([]int{1, 5, 11, 5}))
+	// fmt.Println(lengthAfterTransformations("ayy", 4))
+	// fmt.Println(minimumSteps("10100"))
+	// fmt.Println(distributeCandies(10, 4))
+	// mergesort([]int{1, 2, 3, 4})
+	// // fmt.Println(getRow(3))
+	// fmt.Println(findLength([]int{1, 2, 3}, []int{3, 2}))
+	// fmt.Println(runHeap([]int{3, 2, 5, 1, 4}))
+	// fmt.Println(permuteUnique([]int{1, 1, 2}))
+	// fmt.Println(canFinish(6, [][]int{{1, 0}, {2, 0}, {3, 1}, {3, 2}, {4, 3}, {5, 4}})) // true
+	// fmt.Println(maxAreaOfIsland(
+	// 	[][]int{
+	// 		{0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+	// 		{0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+	// 		{0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+	// 		{0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0},
+	// 		{0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0},
+	// 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
+	// 		{0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0},
+	// 		{0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0},
+	// 	},
+	// ))
+	// fmt.Println(mynumIslands(
+	// 	[][]byte{
+	// 		{'1', '1', '1', '1', '0'},
+	// 		{'1', '1', '0', '1', '0'},
+	// 		{'1', '1', '0', '0', '1'},
+	// 		{'0', '0', '0', '1', '0'},
+	// 	},
+	// ))
+	// graph := map[node][]node{
+	// 	{key: "A", value: 1}: {{key: "B", value: 2}, {key: "C", value: 3}},
+	// 	{key: "B", value: 2}: {{key: "D", value: 4}, {key: "E", value: 5}},
+	// 	{key: "C", value: 3}: {{key: "F", value: 6}},
+	// 	{key: "D", value: 4}: {},
+	// 	{key: "E", value: 5}: {},
+	// 	{key: "F", value: 6}: {},
+	// }
+	// // Traces: A -> B,C -> D,E,F
+	// fmt.Println(bfs(graph, node{key: "C", value: 3}))
+	// fmt.Println(search([]int{4, 5, 6, 7, 9, 11, 0, 1, 2, 3}, 4))
+	// fmt.Println(circularPermutation(3, 2))
+	// fmt.Println(maxVowels("tryhard", 7))
+	// // fmt.Println(sequentialDigits(8511, 23553))
+	// fmt.Println(sequentialDigits(178546104, 812704742))
+	// fmt.Println(reverseWords("hello this is very cool very dumb"))
+	// fmt.Println(minimizeArrayValue([]int{13, 13, 20, 0, 8, 9, 9}))
+	// fmt.Println(countDays(5, [][]int{{1, 4}, {2, 3}, {3, 4}}))
+	// fmt.Println(MinimumSeconds([]int{11, 4}))
+	// fmt.Println(MinCostArr([]int{6, 2, 8, 4}))
+	// // fmt.Println(twoEditWords([]string{"word", "note", "ants", "wood"}, []string{"wood", "joke", "moat"}))
 	// fmt.Println(minSteps(5))
 	// fmt.Println(addMinimum("abcabcababcc"))
 	// fmt.Println(subsetsWithDup([]int{1, 2, 2}))

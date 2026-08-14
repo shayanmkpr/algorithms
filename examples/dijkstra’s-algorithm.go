@@ -38,6 +38,14 @@ Example: heights = [[1,2,2],[3,8,2],[5,3,5]]  ->  2
 Hint: Treat the grid as a graph where edge cost = |h(a)-h(b)|. Dijkstra,
 but the path "cost" is max edge so far, not sum.
 
+[MEDIUM] LeetCode 2290 - Minimum Obstacle Removal to Reach Corner
+grid[i][j] is 0 (empty) or 1 (obstacle). Moving up/down/left/right,
+removing an obstacle costs 1. Return min cost from (0,0) to (m-1,n-1).
+Example: grid = [[0,1],[1,0]]  ->  1
+Hint: Dijkstra where the weight of entering a cell is its value (0 or 1).
+dist[cell] = min obstacles removed to reach it. Relax neighbors with
+cost = grid[neighbor] and pop in increasing dist order.
+
 [HARD] LeetCode 778 - Swim in Rising Water
 At time t, you can swim between two adjacent cells if both have elevation
 <= t. Find the minimum t to swim from (0,0) to (n-1,n-1).
@@ -230,7 +238,46 @@ func minimumEffortPath(heights [][]int) int {
 	return 0
 }
 
-// 5) [HARD] LC 778: Swim in Rising Water -- O(n^2 log n)
+// 5) [MEDIUM] LC 2290: Minimum Obstacle Removal to Reach Corner -- O(m*n*log(m*n))
+func minimumObstacles(grid [][]int) int {
+	m, n := len(grid), len(grid[0])
+	const inf = 1 << 30
+	dist := make([][]int, m)
+	for i := range dist {
+		dist[i] = make([]int, n)
+		for j := range dist[i] {
+			dist[i][j] = inf
+		}
+	}
+	dist[0][0] = 0
+	pq := &minPQ{{0, 0}}
+	heap.Init(pq)
+	dirs := [4][2]int{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+	for pq.Len() > 0 {
+		cur := heap.Pop(pq).(pqItem)
+		x, y := cur.node/n, cur.node%n
+		if cur.dist > dist[x][y] {
+			continue
+		}
+		if x == m-1 && y == n-1 {
+			return cur.dist
+		}
+		for _, d := range dirs {
+			nx, ny := x+d[0], y+d[1]
+			if nx < 0 || nx >= m || ny < 0 || ny >= n {
+				continue
+			}
+			nd := cur.dist + grid[nx][ny]
+			if nd < dist[nx][ny] {
+				dist[nx][ny] = nd
+				heap.Push(pq, pqItem{nd, nx*n + ny})
+			}
+		}
+	}
+	return dist[m-1][n-1]
+}
+
+// 6) [HARD] LC 778: Swim in Rising Water -- O(n^2 log n)
 func swimInWater(grid [][]int) int {
 	n := len(grid)
 	const inf = 1 << 30

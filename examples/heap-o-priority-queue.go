@@ -36,6 +36,13 @@ Example: nums=[1,1,1,2,2,3], k=2  ->  [1,2]
 Hint: Count frequencies in a map. Push (count, num) into a min-heap of
 size k; replace the top if a more frequent element comes along.
 
+[MEDIUM] LeetCode 1962 - Remove Stones to Minimize Total
+piles[i] stones in pile i. In one operation choose any pile and remove
+floor(piles[i]/2) stones. After exactly k operations, minimize the total.
+Example: piles = [5,4,9], k = 2  ->  12
+Hint: Greedy with a max-heap: always halve the current largest pile. Push
+the reduced value back and repeat k times; sum the remaining stones.
+
 [HARD] LeetCode 295 - Find Median from Data Stream
 Support addNum(num) and findMedian() with median in O(log n) and O(1).
 Example: addNum(1), addNum(2), findMedian()->1.5; addNum(3), findMedian()->2
@@ -201,7 +208,23 @@ func topKFrequent(nums []int, k int) []int {
 	return out
 }
 
-// 5) [HARD] LC 295: Find Median from Data Stream -- O(log n) add, O(1) find
+// 5) [MEDIUM] LC 1962: Remove Stones to Minimize Total -- O((n + k) log n)
+func minStoneSum(piles []int, k int) int {
+	h := &intMaxHeap{}
+	*h = append(*h, piles...)
+	heap.Init(h)
+	for i := 0; i < k; i++ {
+		top := heap.Pop(h).(int)
+		heap.Push(h, top-top/2)
+	}
+	total := 0
+	for h.Len() > 0 {
+		total += heap.Pop(h).(int)
+	}
+	return total
+}
+
+// 6) [HARD] LC 295: Find Median from Data Stream -- O(log n) add, O(1) find
 type MedianFinder struct {
 	low  *intMaxHeap // bottom half
 	high *intMinHeap // top half
