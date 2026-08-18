@@ -16,12 +16,11 @@ func main() {
 	quickSort(someArr)
 	fmt.Println(someArr)
 	fmt.Println(quickSort(someArr))
-	fmt.Println(countNumbersWithUniqueDigits(3))
+	// fmt.Println(countNumbersWithUniqueDigits(3))
 	// fmt.Println(mergeSort(someArr))
 	// fmt.Println(pascalSecond(3))
 	// fmt.Println(dq("(()((())))"))
 }
-
 func runBfs() {
 	myGrid := grid{
 		loc{x: 0, y: 0}: []loc{{x: 0, y: 1}, {x: 1, y: 0}},
