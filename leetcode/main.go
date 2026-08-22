@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type IntHeap []int
 
@@ -79,7 +81,15 @@ func MinCost(nums []int) int {
 }
 
 func main() {
-	fmt.Println(productExceptSelf([]int{2, 3, 4}))
+	fmt.Println(longestConsecutive([]int{1, 2, 6, 7, 8}))
+	// s := new(Solution)
+	// encodedString := s.Encode([]string{"hello", "this", "should", "should"})
+	// fmt.Println(encodedString)
+	// decodedString := s.Decode(encodedString)
+	// fmt.Println(decodedString)
+	// fmt.Println(climbStairs(3))
+	// fmt.Println(oldClimbStairs(10))
+	// fmt.Println(productExceptSelf([]int{2, 3, 4}))
 	// fmt.Println(canPartition([]int{1, 2, 3, 5}))
 	// fmt.Println(canPartition([]int{1, 5, 11, 5}))
 	// fmt.Println(lengthAfterTransformations("ayy", 4))

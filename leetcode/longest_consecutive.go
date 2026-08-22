@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func longestConsecutive(nums []int) int {
+func oldLongestConsecutive(nums []int) int {
 	if len(nums) == 0 {
 		return 0
 	}

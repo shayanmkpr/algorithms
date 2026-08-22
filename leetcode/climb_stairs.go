@@ -1,6 +1,6 @@
 package main
 
-func climbStairs(n int) int {
+func oldClimbStairs(n int) int {
 	memo := make(map[int]int)
 
 	var rec func(int) int
